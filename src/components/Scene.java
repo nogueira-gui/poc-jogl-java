@@ -1,5 +1,6 @@
 package components;
 
+import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -9,6 +10,11 @@ public class Scene implements GLEventListener {
     private float xMin, xMax, yMin, yMax, zMin, zMax;
 
     private float rot_x, rot_y, rot_z = 0.0f;
+
+    private int lastMouseX;
+
+    private int lastMouseY;
+
 
     GLU glu;
 
@@ -54,13 +60,53 @@ public class Scene implements GLEventListener {
     }
 
     public void rotacionarX() {
+        if (rot_x >= 360.0F)
+            this.rot_x = 0.0F;
         this.rot_x = 5.0f + this.rot_x;
     }
     public void rotacionarY() {
+        if (rot_y >= 360.0F)
+            this.rot_y = 0.0F;
         this.rot_y = 5.0f + this.rot_y;
     }
     public void rotacionarZ() {
+        if (rot_z >= 360.0F)
+            this.rot_z = 0.0F;
         this.rot_z = 5.0f + this.rot_z;
+    }
+
+    public void objectIsPressed(int x, int y) {
+        int currentMouseX = x;
+        int currentMouseY = y;
+
+        // Calcula a diferença entre as posições atual e anterior do mouse
+        int dx = currentMouseX - lastMouseX;
+        int dy = currentMouseY - lastMouseY;
+
+        // Define sensibilidades de rotação (ajuste conforme necessário)
+        float sensitivityX = 0.5f;
+        float sensitivityY = 0.5f;
+
+        // Atualiza as rotações em torno dos eixos Y e X
+        rot_y += dx * sensitivityX;
+        rot_x += dy * sensitivityY;
+
+        // Mantém as rotações dentro de 0-360 graus
+        if (rot_y < 0) {
+            rot_y += 360;
+        } else if (rot_y >= 360) {
+            rot_y -= 360;
+        }
+
+        if (rot_x < -90) {
+            rot_x = -90;
+        } else if (rot_x > 90) {
+            rot_x = 90;
+        }
+
+        lastMouseX = currentMouseX;
+        lastMouseY = currentMouseY;
+
     }
 
     private static void drawCube(GL2 gl, float tamanho, float dx, float dy, float dz, float rot_x, float rot_y, float rot_z) {

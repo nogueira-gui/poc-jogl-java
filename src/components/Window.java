@@ -26,6 +26,7 @@ public class Window {
         glWindow.addGLEventListener(scene); //adiciona a Cena a Janela
         //Habilita o teclado : cena
         glWindow.addKeyListener(new KeyBoard(scene));
+        glWindow.addMouseListener(new Mouse(scene));
 
         //window.requestFocus();
         FPSAnimator animator = new FPSAnimator(glWindow, 60);
