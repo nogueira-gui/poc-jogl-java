@@ -15,6 +15,10 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+!jogl-libs/JOGL_Linux
+!jogl-libs/JOGL_Win64
+!jogl-libs/JOGL_MacOS.zip
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
