@@ -33,7 +33,6 @@ public class Mouse implements MouseListener {
     public void mousePressed(MouseEvent e) {
         if (e.isButtonDown(MouseEvent.BUTTON1)) {
             setLeftButtonPressed(true);
-            System.out.println("PressIn LeftButton.");
         }
     }
 
@@ -41,7 +40,6 @@ public class Mouse implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             setLeftButtonPressed(false);
-            System.out.println("PressOut LeftButton.");
         }
     }
 
