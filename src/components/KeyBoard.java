@@ -12,7 +12,7 @@ public class KeyBoard implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Key pressed: " + e.getKeyCode());
+        System.out.println("Key pressed: " + e.getKeyCode() + e.getKeyChar());
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
             System.exit(0);
 
@@ -22,6 +22,15 @@ public class KeyBoard implements KeyListener {
             cena.rotacionarZ();
         if(e.getKeyChar() == 'y')
             cena.rotacionarY();
+        if(e.getKeyCode() == 150)
+            cena.transladar(0.0f,0.05f,0.0f);
+        if(e.getKeyCode() == 151)
+            cena.transladar(0.05f,0.0f,0.0f);
+        if(e.getKeyCode() == 149)
+            cena.transladar(-0.05f,0.0f,0.0f);
+        if(e.getKeyCode() == 152)
+            cena.transladar(0.0f,-0.05f,0.0f);
+
     }
 
     @Override

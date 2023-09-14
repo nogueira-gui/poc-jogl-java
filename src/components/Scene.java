@@ -8,7 +8,7 @@ import com.jogamp.opengl.glu.GLU;
 public class Scene implements GLEventListener {
     private float xMin, xMax, yMin, yMax, zMin, zMax;
 
-    private float rot_x, rot_y, rot_z = 0.0f;
+    private float dir_x, dir_y, dir_z, rot_x, rot_y, rot_z = 0.0f;
 
     private int lastMouseX;
 
@@ -41,6 +41,32 @@ public class Scene implements GLEventListener {
         *
         */
         //draw lines XYZ perspective
+        drawLinesXYZ(gl);
+
+//        drawTriangle(gl, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
+        drawCube(gl, 0.50F, this.dir_x, this.dir_y, this.dir_z, this.rot_x, this.rot_y, this.rot_z);
+
+        gl.glFlush();
+    }
+
+    private void drawTriangle(GL2 gl, float dx, float dy, float rz, float rx, float ry) {
+        float[][] edges = {
+                {0.0f + dx, 0.0f + dy},
+                {0.4f + dx, 0.0f + dy},
+                {0.4f + dx, 0.4f + dy}
+        };
+        gl.glBegin(GL2.GL_TRIANGLES);
+        gl.glPushMatrix();
+        gl.glColor3f(1.0f, 1.0f, 1.0f);
+        for (var edge : edges) {
+            gl.glVertex2f(edge[0], edge[1]);
+        }
+        gl.glEnd();
+        gl.glPopMatrix();
+    }
+
+    private void drawLinesXYZ(GL2 gl) {
         gl.glBegin(GL2.GL_LINES);
         gl.glColor3f(1, 0, 0); //red
         gl.glVertex3f(0, 0, 0);
@@ -52,10 +78,6 @@ public class Scene implements GLEventListener {
         gl.glVertex3f(0, 0, zMin);
         gl.glVertex3f(-1, -1, zMax);
         gl.glEnd();
-
-        drawCube(gl, 0.50F, 0.0F, 0.0F, 0.0F, this.rot_x, this.rot_y, this.rot_z);
-
-        gl.glFlush();
     }
 
     public void rotacionarX() {
@@ -74,9 +96,13 @@ public class Scene implements GLEventListener {
         this.rot_z = 5.0f + this.rot_z;
     }
 
-    public void objectIsPressed(int x, int y) {
-        int currentMouseX = x;
-        int currentMouseY = y;
+    public void transladar(float dx, float dy, float dz) {
+        this.dir_x += dx;
+        this.dir_y += dy;
+        this.dir_z += dz;
+    }
+
+    public void objectIsPressed(int currentMouseX, int currentMouseY) {
 
         // Calcula a diferença entre as posições atual e anterior do mouse
         int dx = currentMouseX - lastMouseX;
