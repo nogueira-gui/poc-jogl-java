@@ -14,6 +14,8 @@ public class Scene implements GLEventListener {
 
     private int lastMouseY;
 
+    private boolean showCube, showStar, showTriangle, showLines = false;
+
 
     GLU glu;
 
@@ -41,26 +43,58 @@ public class Scene implements GLEventListener {
         *
         */
         //draw lines XYZ perspective
-        drawLinesXYZ(gl);
-
-//        drawTriangle(gl, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-
-        drawCube(gl, 0.50F, this.dir_x, this.dir_y, this.dir_z, this.rot_x, this.rot_y, this.rot_z);
+        if(showLines){
+            drawLinesXYZ(gl);
+        }
+        if(showTriangle){
+            drawTriangle(gl, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        }
+        if(showCube){
+            drawCube(gl, 0.50F, this.dir_x, this.dir_y, this.dir_z, this.rot_x, this.rot_y, this.rot_z);
+        }
+        if(showStar){
+            drawStar(gl, this.dir_x, this.dir_y, this.dir_z, this.rot_x, this.rot_y, this.rot_z);
+        }
 
         gl.glFlush();
     }
 
+    private void drawStar(GL2 gl, float tx, float ty, float tz, float rx, float ry, float rz) {
+        float[][] vertices = {
+                {-0.15f, 0.3f, 0f}, // Ponto superior esquerdo
+                {-0.5f, 0.3f, 0f},  // Ponto esquerdo superior
+                {-0.2f, 0.0f, 0f},  // Ponto médio esquerdo
+                {-0.35f, -0.4f, 0f},// Ponto inferior esquerdo
+                {0.0f, -0.2f, 0f},  // Ponto central
+                {0.35f, -0.4f, 0f}, // Ponto inferior direito
+                {0.2f, 0.0f, 0f},   // Ponto médio direito
+                {0.5f, 0.3f, 0f},   // Ponto superior direito
+                {0.15f, 0.3f, 0f},   // Ponto superior direito
+                {0.0f, 0.9f, 0f}    // Ponto superior
+        };
+
+        aplicarTransformacoes(tx,ty,tz,rx,ry,rz,vertices);
+
+        gl.glColor3f(1.0f, 1.0f, 0.0f);
+        gl.glBegin(GL2.GL_POLYGON);
+        for (float[] vertice : vertices) {
+            gl.glVertex3f(vertice[0], vertice[1], vertice[2]);
+        }
+        gl.glEnd();
+
+    }
+
     private void drawTriangle(GL2 gl, float dx, float dy, float rz, float rx, float ry) {
-        float[][] edges = {
+        float[][] vertices = {
                 {0.0f + dx, 0.0f + dy},
                 {0.4f + dx, 0.0f + dy},
                 {0.4f + dx, 0.4f + dy}
         };
-        gl.glBegin(GL2.GL_TRIANGLES);
         gl.glPushMatrix();
+        gl.glBegin(GL2.GL_TRIANGLES);
         gl.glColor3f(1.0f, 1.0f, 1.0f);
-        for (var edge : edges) {
-            gl.glVertex2f(edge[0], edge[1]);
+        for (var vertice : vertices) {
+            gl.glVertex2f(vertice[0], vertice[1]);
         }
         gl.glEnd();
         gl.glPopMatrix();
@@ -80,16 +114,33 @@ public class Scene implements GLEventListener {
         gl.glEnd();
     }
 
+    public void showAction(char key) {
+        if (key == 'l'){
+            this.showLines = !showLines;
+        }
+        if (key == 'c'){
+            this.showCube = !showCube;
+        }
+        if (key == 's'){
+            this.showStar = !showStar;
+        }
+        if (key == 't'){
+            this.showTriangle = !showTriangle;
+        }
+    }
+
     public void rotacionarX() {
         if (rot_x >= 360.0F)
             this.rot_x = 0.0F;
         this.rot_x = 5.0f + this.rot_x;
     }
+
     public void rotacionarY() {
         if (rot_y >= 360.0F)
             this.rot_y = 0.0F;
         this.rot_y = 5.0f + this.rot_y;
     }
+
     public void rotacionarZ() {
         if (rot_z >= 360.0F)
             this.rot_z = 0.0F;
@@ -148,6 +199,30 @@ public class Scene implements GLEventListener {
                 {-d, d, d}
         };
 
+        aplicarTransformacoes(dx, dy, dz, rot_x, rot_y, rot_z, vertices);
+
+        int[][] edges = {
+                {0, 1}, {1, 2}, {2, 3}, {3, 0},
+                {4, 5}, {5, 6}, {6, 7}, {7, 4},
+                {0, 4}, {1, 5}, {2, 6}, {3, 7}
+        };
+
+        gl.glBegin(GL2.GL_LINES);
+        gl.glColor3f(1, 1, 1); // Branco
+
+        for (int[] edge : edges) {
+            int v1 = edge[0];
+            int v2 = edge[1];
+            float[] vertex1 = vertices[v1];
+            float[] vertex2 = vertices[v2];
+            gl.glVertex3fv(vertex1, 0);
+            gl.glVertex3fv(vertex2, 0);
+        }
+
+        gl.glEnd();
+    }
+
+    private static void aplicarTransformacoes(float dx, float dy, float dz, float rot_x, float rot_y, float rot_z, float[][] vertices) {
         // Aplicar rotações
         float cosY = (float) Math.cos(Math.toRadians(rot_y));
         float sinY = (float) Math.sin(Math.toRadians(rot_y));
@@ -180,30 +255,11 @@ public class Scene implements GLEventListener {
             y = new_y2;
 
             // Atualiza as coordenadas do vértice após as rotações
-            vertex[0] = x + dx;
+            // soma dx dy e dz para translação
+            vertex[0] = x + dx; //atualiza eixo x e soma a translação com dx
             vertex[1] = y + dy;
             vertex[2] = z + dz;
         }
-
-        int[][] edges = {
-                {0, 1}, {1, 2}, {2, 3}, {3, 0},
-                {4, 5}, {5, 6}, {6, 7}, {7, 4},
-                {0, 4}, {1, 5}, {2, 6}, {3, 7}
-        };
-
-        gl.glBegin(GL2.GL_LINES);
-        gl.glColor3f(1, 1, 1); // Branco
-
-        for (int[] edge : edges) {
-            int v1 = edge[0];
-            int v2 = edge[1];
-            float[] vertex1 = vertices[v1];
-            float[] vertex2 = vertices[v2];
-            gl.glVertex3fv(vertex1, 0);
-            gl.glVertex3fv(vertex2, 0);
-        }
-
-        gl.glEnd();
     }
 
 

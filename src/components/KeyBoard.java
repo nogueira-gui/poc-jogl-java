@@ -12,27 +12,38 @@ public class KeyBoard implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Key pressed: " + e.getKeyCode() + e.getKeyChar());
+        float dx = 0.0f;
+        float dy = 0.0f;
+        System.out.println("Key pressed: " + e.getKeyCode());
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
             System.exit(0);
-
         if(e.getKeyChar() == 'x')
             cena.rotacionarX();
         if(e.getKeyChar() == 'z')
             cena.rotacionarZ();
         if(e.getKeyChar() == 'y')
             cena.rotacionarY();
-        if(e.getKeyCode() == 150)
-            cena.transladar(0.0f,0.05f,0.0f);
-        if(e.getKeyCode() == 151)
-            cena.transladar(0.05f,0.0f,0.0f);
-        if(e.getKeyCode() == 149)
-            cena.transladar(-0.05f,0.0f,0.0f);
-        if(e.getKeyCode() == 152)
-            cena.transladar(0.0f,-0.05f,0.0f);
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            dy += 0.05f; // Mover para cima
+        }
 
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            dy -= 0.05f; // Mover para baixo
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            dx -= 0.05f; // Mover para a esquerda
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            dx += 0.05f; // Mover para a direita
+        }
+
+        cena.transladar(dx, dy, 0.0f);
+
+        if (e.getKeyChar() == 's' || e.getKeyChar() == 't' || e.getKeyChar() == 'c' || e.getKeyChar() == 'l')
+            cena.showAction(e.getKeyChar());
     }
-
     @Override
     public void keyReleased(KeyEvent e) { }
 
